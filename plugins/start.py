@@ -8,7 +8,7 @@ from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 from bot import Bot
 from config import ADMINS, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT, FORCE_SUB_CHANNEL_IDS
 from helper_func import force_sub, encode, decode, get_messages
-from database.database import add_user, del_user, full_userbase, present_user, add_fsub
+from database.database import add_user, del_user, full_userbase, present_user, add_fsub, add_cache, get_cache
 
 @Bot.on_chat_join_request(filters.chat(FORCE_SUB_CHANNEL_IDS))
 async def Join_requests_handler(_, message):
@@ -17,10 +17,11 @@ async def Join_requests_handler(_, message):
 @Bot.on_message(filters.command('start') & filters.private)
 @force_sub
 async def start_command(client: Client, message: Message):
-    id = message.from_user.id
-    if not await present_user(id):
+    # sourcery skip: avoid-builtin-shadow
+    user_id = message.from_user.id
+    if not await present_user(user_id):
         try:
-            await add_user(id)
+            await add_user(user_id)
         except:
             pass
     text = message.text
@@ -53,6 +54,20 @@ async def start_command(client: Client, message: Message):
             except:
                 return
         temp_msg = await message.reply("Please wait...")
+        for xid in ids:
+            if not (cache := await get_cache(str(xid))):
+                continue
+            file_id = cache["file_id"]
+            caption = cache["caption"]
+            try:
+                await client.send_cached_media(chat_id=message.from_user.id, file_id=str(file_id))
+                await asyncio.sleep(0.5)
+            except FloodWait as e:
+                await asyncio.sleep(e.x)
+                await client.send_cached_media(chat_id=message.from_user.id, file_id=str(file_id))
+            except:
+                pass
+            ids.remove(xid)
         try:
             messages = await get_messages(client, ids)
         except:
@@ -66,12 +81,12 @@ async def start_command(client: Client, message: Message):
                 caption = CUSTOM_CAPTION.format(previouscaption = "" if not msg.caption else msg.caption.html, filename = msg.document.file_name)
             else:
                 caption = "" if not msg.caption else msg.caption.html
+            
+            media = msg.photo or msg.video or msg.animation or msg.audio or msg.voice or msg.sticker or msg.document
+            
+            await add_cache(str(msg.message_id), msg.caption.html, media.file_id)
 
-            if DISABLE_CHANNEL_BUTTON:
-                reply_markup = msg.reply_markup
-            else:
-                reply_markup = None
-
+            reply_markup = msg.reply_markup if DISABLE_CHANNEL_BUTTON else None
             try:
                 await msg.copy(chat_id=message.from_user.id, caption = caption, parse_mode = ParseMode.HTML, reply_markup = reply_markup, protect_content=PROTECT_CONTENT)
                 await asyncio.sleep(0.5)
@@ -80,12 +95,11 @@ async def start_command(client: Client, message: Message):
                 await msg.copy(chat_id=message.from_user.id, caption = caption, parse_mode = ParseMode.HTML, reply_markup = reply_markup, protect_content=PROTECT_CONTENT)
             except:
                 pass
-        return
     else:
         reply_markup = InlineKeyboardMarkup(
             [
                 [
-                  
+
                    InlineKeyboardButton("🔒 Close", callback_data = "close")
                 ]
             ]
@@ -102,7 +116,8 @@ async def start_command(client: Client, message: Message):
             disable_web_page_preview = True,
             quote = True
         )
-        return
+
+    return
 
     
 #=====================================================================================##
