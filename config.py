@@ -3,13 +3,13 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 # Bot token @Botfather
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "your-bot-token")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7260195533:AAH2iB_OY7M1G3DQmQa_-U4Mm47ADPjAT2c")
 
 # Your API ID from my.telegram.org
-APP_ID = int(os.environ.get("API_ID", "your-api-id"))
+APP_ID = int(os.environ.get("API_ID", "21113240"))
 
 # Your API Hash from my.telegram.org
-API_HASH = os.environ.get("API_HASH", "your-api-hash")
+API_HASH = os.environ.get("API_HASH", "cf60d4f8ad97d15080c0252d9af22321")
 
 # Your db channel ID
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002232357982"))
@@ -21,8 +21,8 @@ OWNER_ID = int(os.environ.get("OWNER_ID", "6824677167"))
 PORT = os.environ.get("PORT", "8080")
 
 # Database
-DB_URI = os.environ.get("DATABASE_URL", "your-mongodb-url")
-DB_NAME = os.environ.get("DATABASE_NAME", "your-db-name")
+DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://Maya:Maya@cluster0.9ntjs0d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+DB_NAME = os.environ.get("DATABASE_NAME", "Maya")
 
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "1"))
 
@@ -41,7 +41,7 @@ if OWNER_ID not in ADMINS:
 CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", None)
 
 # Set True if you want to prevent users from forwarding files from bot
-PROTECT_CONTENT = os.environ.get('PROTECT_CONTENT', "False") == "True"
+PROTECT_CONTENT = True if os.environ.get('PROTECT_CONTENT', "False") == "True" else False
 
 # Set True if you want to disable your channel posts share button
 DISABLE_CHANNEL_BUTTON = os.environ.get("DISABLE_CHANNEL_BUTTON", "False") == "True"
