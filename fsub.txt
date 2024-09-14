@@ -1,5 +1,4 @@
-# (©) Jigarvarma2005
 #Seperate forcesub channels in each line in this format
 #chat_id, invite_link
 
--1001999399899, https://t.me/+3Ufbm_KcJy8yMzg0
+-1002216789959, https://t.me/+3Ufbm_KcJy8yMzg0
