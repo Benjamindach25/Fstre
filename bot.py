@@ -5,6 +5,7 @@ from plugins import web_server
 from pyrogram import Client
 from pyrogram.enums import ParseMode
 import sys
+import pyromod.listen
 from datetime import datetime
 
 from config import API_HASH, APP_ID, LOGGER, TG_BOT_TOKEN, TG_BOT_WORKERS, CHANNEL_ID, PORT, FORCE_SUB_CHANNELS
